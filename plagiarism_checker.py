@@ -21,7 +21,7 @@ def format_student_group(raw_text):
     for i in range(0, len(lines), 2):
         name = lines[i]
         student_id = lines[i+1] if i + 1 < len(lines) else ""
-        formatted.append(f"{name} ({student_id})")
+        formatted.append(f"{name} ({student_id})\n")
 
     return '\n'.join(formatted)
 
