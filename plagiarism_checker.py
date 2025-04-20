@@ -25,6 +25,14 @@ def format_student_group(raw_text):
 
     return '\n'.join(formatted)
 
+def compute_score_stats(results):
+    """Computes weighted average and max scores for title and abstract."""
+    avg_title = (sum(r[1] for r in results) / len(results)) * 3
+    avg_abstract = (sum(r[2] for r in results) / len(results)) * 1.5
+    max_title = max(r[1] for r in results)
+    max_abstract = max(r[2] for r in results)
+    return avg_title, avg_abstract, max_title, max_abstract
+
 
 # Streamlit UI
 st.title("Project Report Plagiarism Checker")
@@ -49,10 +57,7 @@ if uploaded_file is not None:
 
         if results:
             # st.write("### Potential Matches Found:")
-            avg_title = (sum([r[1] for r in results]) / len(results))*3
-            avg_abstract = (sum([r[2] for r in results]) / len(results))*1.5
-            max_title = max(r[1] for r in results)
-            max_abstract = max(r[2] for r in results)
+            avg_title, avg_abstract, max_title, max_abstract = compute_score_stats(results)
 
             if(max_title>avg_title or max_abstract>avg_abstract):
                 st.write("### Potential Matches Found:")
@@ -67,7 +72,7 @@ if uploaded_file is not None:
                         st.write(f"📌 Title Similarity: {title_score:.2f}%")
                         st.write(f"📌 Abstract Similarity: {abstract_score:.2f}%")
                         st.write("\n")
-                        st.write(f"🎓 **Student Group:**\n{format_student_group(students)}")
+                        st.write(f"🎓 **Student Group:**\n {format_student_group(students)}")
                         st.write(f"🧑‍🏫 **Guide:** {guide}")
                         st.write("---")
             else:
@@ -100,11 +105,6 @@ if uploaded_file is not None:
               f"{readability_score:.1f}",
               help="60+ is good (higher = easier to read)")
 
-        # for report, title_score, abstract_score in results:
-        # # Ensure minimum score is zero
-        #     title_score = max(0, title_score)
-        #     abstract_score = max(0, abstract_score)
-        
         #     if title_score > 50 and abstract_score < 30:
         #         suggested_titles = generate_suggestions(title)
         #         st.write("### Suggested Titles:")
