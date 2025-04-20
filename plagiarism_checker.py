@@ -92,7 +92,7 @@ if uploaded_file is not None:
 
         # Readability score using Flesch Reading Ease formula
         rsc= flesch_reading_ease(abstract)
-        readability_score =abs(rsc+10)
+        readability_score =abs(rsc)
 
         col1, col2 = st.columns(2)
         with col1:
