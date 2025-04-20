@@ -10,29 +10,33 @@ LIBRARY_FOLDER = "libraries_inserted"
 DATABASE_FILE = "report_database.json"
 
 def extract_reports_from_library():
-    """Extracts titles and abstracts from all reports in the library folder and updates the database."""
+    """Extracts titles, abstracts, students group names, and guide's names from all reports in the library folder and updates the database."""
     report_data = {}
 
-    # Iterate over PDF files in the library folder
     for file in os.listdir(LIBRARY_FOLDER):
         if file.endswith(".pdf"):
             file_path = os.path.join(LIBRARY_FOLDER, file)
-            
-            try:
-                pdf = fitz.open(file_path)  # Open PDF properly
-                title, abstract = extract_text_from_pdf(pdf)
-                pdf.close()  # Close the PDF after processing
 
-                if title and abstract:  # Ensure extracted data is valid
-                    report_data[file] = {"title": title, "abstract": abstract}
+            try:
+                pdf = fitz.open(file_path)
+                title, abstract, students, guide = extract_text_from_pdf(pdf)
+                pdf.close()
+
+                if title and abstract:
+                    report_data[file] = {
+                        "title": title,
+                        "abstract": abstract,
+                        "students": students,
+                        "guide": guide
+                    }
             except Exception as e:
                 print(f"Error processing {file}: {e}")
 
-    # Save extracted data to JSON database
     with open(DATABASE_FILE, "w", encoding="utf-8") as db_file:
         json.dump(report_data, db_file, indent=4)
 
     print("Report database updated successfully!")
+
 
 def compute_similarity(new_title, new_abstract):
     """Compares the new report's title and abstract against the stored reports and returns similarity scores separately."""
@@ -61,10 +65,12 @@ def compute_similarity(new_title, new_abstract):
     abstract_similarities = cosine_similarity(abstract_vectors[0], abstract_vectors[1:])[0]
 
     # Collect results where similarity is above threshold
-    threshold = 0.50  # 50% similarity threshold
+    threshold = 0.15  # 50% similarity threshold
     for i, (file, data) in enumerate(report_data.items()):
         if title_similarities[i] > threshold or abstract_similarities[i] > threshold:
-            plagiarism_results.append((file, title_similarities[i] * 100, abstract_similarities[i] * 100))
+            students = data.get("students", "Not available")
+            guide = data.get("guide", "Not available")
+            plagiarism_results.append((file, title_similarities[i] * 100, abstract_similarities[i] * 100,students, guide))
 
     return plagiarism_results
 
