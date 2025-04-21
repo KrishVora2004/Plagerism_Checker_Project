@@ -27,8 +27,8 @@ def format_student_group(raw_text):
 
 def compute_score_stats(results):
     """Computes weighted average and max scores for title and abstract."""
-    avg_title = (sum(r[1] for r in results) / len(results)) * 3
-    avg_abstract = (sum(r[2] for r in results) / len(results)) * 1.5
+    avg_title = (sum(r[1] for r in results) / len(results)) * 2
+    avg_abstract = (sum(r[2] for r in results) / len(results)) * 1.2
     max_title = max(r[1] for r in results)
     max_abstract = max(r[2] for r in results)
     return avg_title, avg_abstract, max_title, max_abstract
@@ -42,7 +42,7 @@ uploaded_file = st.file_uploader("Upload a project report (.pdf)", type=["pdf"])
 if uploaded_file is not None:
     # Extract title & abstract directly from uploaded PDF (without saving)
     with fitz.open(stream=uploaded_file.read(), filetype="pdf") as pdf:
-        title, abstract,matched_students_cur, matched_guide_cur = extract_text_from_pdf(pdf)
+        title, abstract,matched_students_cur, matched_guide_cur,matched_year = extract_text_from_pdf(pdf)
 
     # Display extracted information
     st.subheader("Extracted Title:")
@@ -63,7 +63,7 @@ if uploaded_file is not None:
                 st.write("### Potential Matches Found:")
 
                 # Filter and display only significant results
-                for report, title_score, abstract_score,students,guide, in results:
+                for report, title_score, abstract_score,students,guide,year, in results:
                     title_score = max(0, title_score)
                     abstract_score = max(0, abstract_score)
 
@@ -74,6 +74,7 @@ if uploaded_file is not None:
                         st.write("\n")
                         st.write(f"🎓 **Student Group:**\n {format_student_group(students)}")
                         st.write(f"🧑‍🏫 **Guide:** {guide}")
+                        st.write(f"📅 **Academic Year: ** {year}")
                         st.write("---")
             else:
                 st.write("✅ No significant plagiarism detected.")
@@ -92,7 +93,7 @@ if uploaded_file is not None:
 
         # Readability score using Flesch Reading Ease formula
         rsc= flesch_reading_ease(abstract)
-        readability_score =abs(rsc)
+        readability_score =abs(rsc+10)
 
         col1, col2 = st.columns(2)
         with col1:

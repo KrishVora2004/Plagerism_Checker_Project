@@ -40,4 +40,16 @@ def extract_text_from_pdf(pdf):
     except Exception as e:
         abstract = f"Error extracting abstract: {str(e)}"
 
-    return title, abstract, students, guide
+    try:
+        last_lines = first_page_text.strip().split('\n')[-5:]  # Check bottom few lines
+        academic_year = "Year not found"
+        for line in last_lines:
+            match = re.search(r"(20\d{2}-20\d{2})", line)
+            if match:
+                academic_year = match.group(1)
+                break
+    except Exception as e:
+        academic_year = f"Error extracting year: {str(e)}"
+
+    return title, abstract, students, guide, academic_year
+

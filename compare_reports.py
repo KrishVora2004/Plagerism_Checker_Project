@@ -19,7 +19,7 @@ def extract_reports_from_library():
 
             try:
                 pdf = fitz.open(file_path)
-                title, abstract, students, guide = extract_text_from_pdf(pdf)
+                title, abstract, students, guide, year = extract_text_from_pdf(pdf)
                 pdf.close()
 
                 if title and abstract:
@@ -27,7 +27,8 @@ def extract_reports_from_library():
                         "title": title,
                         "abstract": abstract,
                         "students": students,
-                        "guide": guide
+                        "guide": guide,
+                        "year": year
                     }
             except Exception as e:
                 print(f"Error processing {file}: {e}")
@@ -65,12 +66,13 @@ def compute_similarity(new_title, new_abstract):
     abstract_similarities = cosine_similarity(abstract_vectors[0], abstract_vectors[1:])[0]
 
     # Collect results where similarity is above threshold
-    threshold = 0.15  # 50% similarity threshold
+    threshold = 0.20  # 15% similarity threshold
     for i, (file, data) in enumerate(report_data.items()):
         if title_similarities[i] > threshold or abstract_similarities[i] > threshold:
             students = data.get("students", "Not available")
             guide = data.get("guide", "Not available")
-            plagiarism_results.append((file, title_similarities[i] * 100, abstract_similarities[i] * 100,students, guide))
+            year = data.get("year", "Not available")
+            plagiarism_results.append((file, title_similarities[i] * 100, abstract_similarities[i] * 100,students, guide,year))
 
     return plagiarism_results
 
