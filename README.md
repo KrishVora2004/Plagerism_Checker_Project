@@ -26,12 +26,12 @@ o   Present results in an interpretable dashboard for educators/students.
 o   Allow downloadable similarity and readability reports.
  
  
-Scope
+Scope:
 The system is designed to:
- ✔ Analyze academic project reports (PDF/DOCX formats) in a given domain.
- ✔ Compare content only against a preloaded database (not web sources).
- ✔ Support English-language text analysis.
- ✔ Serve educators and students for fair evaluation and self-improvement.
+ * Analyze academic project reports (PDF/DOCX formats) in a given domain.
+ * Compare content only against a preloaded database (not web sources).
+ * Support English-language text analysis.
+ * Serve educators and students for fair evaluation and self-improvement.
 
  Methodological Details:
 
