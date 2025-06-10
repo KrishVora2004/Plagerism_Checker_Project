@@ -66,7 +66,7 @@ def compute_similarity(new_title, new_abstract):
     abstract_similarities = cosine_similarity(abstract_vectors[0], abstract_vectors[1:])[0]
 
     # Collect results where similarity is above threshold
-    threshold = 0.15  # 15% similarity threshold
+    threshold = 0.20  # 15% similarity threshold
     for i, (file, data) in enumerate(report_data.items()):
         if title_similarities[i] > threshold or abstract_similarities[i] > threshold:
             students = data.get("students", "Not available")
