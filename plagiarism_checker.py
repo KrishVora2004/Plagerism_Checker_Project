@@ -16,14 +16,6 @@ def format_student_group(raw_text):
 
     return '\n'.join(formatted)
 
-def compute_score_stats(results):
-    """Computes weighted average and max scores for title and abstract."""
-    avg_title = (sum(r[1] for r in results) / len(results)) 
-    avg_abstract = (sum(r[2] for r in results) / len(results)) 
-    max_title = max(r[1] for r in results)
-    max_abstract = max(r[2] for r in results)
-    return avg_title, avg_abstract, max_title, max_abstract
-
 
 # Streamlit UI
 st.title("Project Report Plagiarism Checker")
@@ -37,29 +29,23 @@ if st.button("Check Plagiarism"):
 
     if results:
         # st.write("### Potential Matches Found:")
-        avg_title, avg_abstract, max_title, max_abstract = compute_score_stats(results)
-
-        if(max_title>avg_title or max_abstract>avg_abstract):
-            st.write("### Potential Matches Found:")
+        max_title=max(r[1] for r in results)
+        st.write("### Potential Matches Found:")
 
             # Filter and display only significant results
-            for report, title_score, abstract_score,students,guide,year, in results:
-                title_score = max(0, title_score)
-                abstract_score = max(0, abstract_score)
+        for report, title_score, abstract_score,students,guide,year, in results:
+            title_score = max(0, title_score)
+            abstract_score = max(0, abstract_score)
 
-                if title_score >= avg_title or abstract_score >= avg_abstract:
-                    st.write(f"📄 **{report}**")
-                    st.write(f"📌 Title Similarity: {title_score:.2f}%")
-                    st.write(f"📌 Abstract Similarity: {abstract_score:.2f}%")
-                    st.write("\n")
-                    st.write(f"🎓 **Student Group:**\n {format_student_group(students)}")
-                    st.write(f"🧑‍🏫 **Guide:** {guide}")
-                    st.write(f"📅 **Academic Year: ** {year}")
-                    st.write("---")
-        else:
-            st.write("✅ No significant plagiarism detected.")
+            st.write(f"📄 **{report}**")
+            st.write(f"📌 Title Similarity: {title_score:.2f}%")
+            st.write(f"📌 Abstract Similarity: {abstract_score:.2f}%")
+            st.write("\n")
+
+            st.write(f"🎓 **Student Group:**\n {format_student_group(students)}")
+            st.write(f"🧑‍🏫 **Guide:** {guide}")
+            st.write(f"📅 **Academic Year: ** {year}")
             st.write("---")
-
     else:
         st.write("✅ No significant plagiarism detected.")
         st.write("---")
